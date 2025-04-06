@@ -34,7 +34,6 @@ export default function SoundProvider({ children }: SoundProviderProps) {
 
   const {
     playingSong,
-    nextSong,
     playNext: playNextSong,
     playbackMode,
     setPlayingSong,
@@ -48,6 +47,12 @@ export default function SoundProvider({ children }: SoundProviderProps) {
       unload();
     }
   }, [playingSong]);
+
+  useEffect(() => {
+    if (status && status.didJustFinish) {
+      playNext();
+    }
+  }, [status]);
 
   useEffect(() => {
     return sound
@@ -66,12 +71,7 @@ export default function SoundProvider({ children }: SoundProviderProps) {
     });
     await newSound.playAsync();
     newSound.setOnPlaybackStatusUpdate((statusValue) => {
-      const newStatus = statusValue as SoundStatus;
-      if (newStatus.didJustFinish) {
-        playNext();
-      } else {
-        setStatus(newStatus);
-      }
+      setStatus(statusValue as SoundStatus);
     });
     const newStatus = (await newSound.getStatusAsync()) as SoundStatus;
     setSound(newSound);
@@ -97,11 +97,10 @@ export default function SoundProvider({ children }: SoundProviderProps) {
   };
 
   const playNext = async () => {
-    if (sound && nextSong) {
+    if (sound) {
       await sound.unloadAsync();
-      await createSound(nextSong.uri);
-      playNextSong(playingPlaylist, playbackMode);
     }
+    playNextSong(playingPlaylist, playbackMode);
   };
 
   const unload = async () => {

@@ -29,9 +29,11 @@ export default function TabIndex() {
 
   const handlePressRepeatAll = () => {
     setPlayingPlaylist(playlist);
+    const newPlaybackMode = PLAYBACK_MODE.REPEAT_ALL;
+    selectPlaybackMode(newPlaybackMode);
     const song = playlist.songs[0];
     if (!song) return;
-    playSong(song, playlist, playbackMode);
+    playSong(song, playlist, newPlaybackMode);
   };
 
   if (!playlist) return null;

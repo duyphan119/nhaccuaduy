@@ -1,12 +1,11 @@
+import FooterOkCancel from "@/components/FooterOkCancel";
+import Modal from "@/components/modals/Modal";
+import SongItem from "@/components/SongItem";
+import { useAddSongsToPlaylist } from "@/hooks/useAddSongToPlaylist";
 import { usePlaylistsStore } from "@/hooks/usePlaylistsStore";
 import { COLOR } from "@/utils/constants";
 import { utilsStyles } from "@/utils/styles";
-
 import { Dimensions, ScrollView, StyleSheet, Text, View } from "react-native";
-import FooterOkCancel from "../FooterOkCancel";
-import SongItem from "../SongItem";
-import Modal from "@/components/modals/Modal";
-import { useAddSongsToPlaylist } from "@/hooks/useAddSongToPlaylist";
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 

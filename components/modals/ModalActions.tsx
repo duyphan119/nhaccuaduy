@@ -1,13 +1,23 @@
 import { COLOR } from "@/utils/constants";
+import { ReactElement } from "react";
 import {
   Dimensions,
   Modal,
   StyleSheet,
   Text,
+  TextStyle,
   TouchableOpacity,
   View,
+  ViewStyle,
 } from "react-native";
-import { ModalAction } from "../ButtonMore";
+
+export type ModalAction = {
+  title: string;
+  onPress: () => void;
+  textStyle?: TextStyle;
+  icon?: ReactElement;
+  style?: ViewStyle;
+};
 
 type ModalActionsProps = {
   visible: boolean;

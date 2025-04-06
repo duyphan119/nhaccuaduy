@@ -1,20 +1,11 @@
+import ModalActions, { ModalAction } from "@/components/modals/ModalActions";
 import { useDeletePlaylists } from "@/hooks/useDeletePlaylists";
 import { usePlaylistsStore } from "@/hooks/usePlaylistsStore";
 import { Playlist } from "@/types";
 import { COLOR } from "@/utils/constants";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
-import { ReactElement, useMemo, useState } from "react";
-import { TextStyle, TouchableOpacity, ViewStyle } from "react-native";
-import ModalActions from "./modals/ModalActions";
-import { useEditPlaylist } from "@/hooks/useEditPlaylist";
-
-export type ModalAction = {
-  title: string;
-  onPress: () => void;
-  textStyle?: TextStyle;
-  icon?: ReactElement;
-  style?: ViewStyle;
-};
+import { useMemo, useState } from "react";
+import { TouchableOpacity, ViewStyle } from "react-native";
 
 type ButtonSongMoreProps = {
   actions?: ModalAction[];
@@ -31,7 +22,6 @@ export default function ButtonPlaylistMore({
   const [open, setOpen] = useState<boolean>(false);
 
   const {
-    isSelectingPlaylists,
     selectingPlaylistNames,
     deletePlaylists,
     openModalPlaylistForm,
