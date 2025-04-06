@@ -1,74 +1,84 @@
-import { Image, StyleSheet, Platform } from 'react-native';
+import { usePlaylistsStore } from "@/hooks/usePlaylistsStore";
+import { useSongsStore } from "@/hooks/useSongsStore";
+import { utilsStyles } from "@/utils/styles";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { MaterialIcons } from "@expo/vector-icons";
+import { COLOR, PLAYBACK_MODE } from "@/utils/constants";
+import { getNextSong } from "@/utils";
+import Songs from "@/components/Songs";
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+export default function TabIndex() {
+  const { playlists, setPlayingPlaylist } = usePlaylistsStore();
 
-export default function HomeScreen() {
+  const { playbackMode, playingSong, playSong, selectPlaybackMode } =
+    useSongsStore();
+
+  const playlist = playlists[0];
+
+  const handlePressShuffle = () => {
+    setPlayingPlaylist(playlist);
+    const newPlaybackMode = PLAYBACK_MODE.SHUFFLE;
+    selectPlaybackMode(newPlaybackMode);
+    const song = getNextSong({
+      songs: playlist.songs,
+      playbackMode: newPlaybackMode,
+      playingSong: playingSong || undefined,
+    });
+    playSong(song, playlist, newPlaybackMode);
+  };
+
+  const handlePressRepeatAll = () => {
+    setPlayingPlaylist(playlist);
+    const song = playlist.songs[0];
+    if (!song) return;
+    playSong(song, playlist, playbackMode);
+  };
+
+  if (!playlist) return null;
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12'
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+    <View style={[utilsStyles.container, { gap: 10 }]}>
+      <View style={[utilsStyles.horizontalCenter, { gap: 10, padding: 10 }]}>
+        <TouchableOpacity
+          onPress={handlePressShuffle}
+          style={[utilsStyles.horizontalCenter, styles.button]}
+        >
+          <MaterialIcons
+            name="shuffle"
+            size={20}
+            color={styles.buttonText.color}
+          />
+          <Text style={styles.buttonText}>Ngẫu nhiên</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={handlePressRepeatAll}
+          style={[utilsStyles.horizontalCenter, styles.button]}
+        >
+          <MaterialIcons
+            name="repeat"
+            size={20}
+            color={styles.buttonText.color}
+          />
+          <Text style={styles.buttonText}>Toàn bộ</Text>
+        </TouchableOpacity>
+      </View>
+      <View style={{ paddingInline: 10 }}>
+        <Songs playlist={playlist} />
+      </View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
+  button: {
+    gap: 5,
+    paddingInline: 10,
+    paddingBlock: 16,
+    borderRadius: 4,
+    backgroundColor: "#333",
+    flex: 1,
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  buttonText: {
+    color: COLOR.PRIMARY,
+    fontSize: 16,
   },
 });

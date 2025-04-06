@@ -1,39 +1,38 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
-import { StatusBar } from 'expo-status-bar';
-import { useEffect } from 'react';
-import 'react-native-reanimated';
-
-import { useColorScheme } from '@/hooks/useColorScheme';
-
-// Prevent the splash screen from auto-hiding before asset loading is complete.
-SplashScreen.preventAutoHideAsync();
+import QueryProvider from "@/components/QueryProvider";
+import SoundProvider from "@/components/SoundProvider";
+import { initDatabase } from "@/db";
+import useRequestPermissions from "@/hooks/useRequestPermissions";
+import useSetupAudio from "@/hooks/useSetupAudio";
+import { COLOR } from "@/utils/constants";
+import { Stack } from "expo-router";
+import { SQLiteProvider } from "expo-sqlite";
+import { StatusBar } from "react-native";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
-  const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
-  });
+  useRequestPermissions();
 
-  useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
-    }
-  }, [loaded]);
-
-  if (!loaded) {
-    return null;
-  }
-
+  useSetupAudio();
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+    <SQLiteProvider databaseName="test.db" onInit={initDatabase}>
+      <QueryProvider>
+        <SoundProvider>
+          <SafeAreaProvider>
+            <SafeAreaView style={{ flex: 1 }}>
+              <Stack>
+                <Stack.Screen
+                  name="(tabs)"
+                  options={{
+                    headerShown: false,
+                  }}
+                />
+              </Stack>
+
+              <StatusBar backgroundColor={COLOR.BLACK} />
+            </SafeAreaView>
+          </SafeAreaProvider>
+        </SoundProvider>
+      </QueryProvider>
+    </SQLiteProvider>
   );
 }
